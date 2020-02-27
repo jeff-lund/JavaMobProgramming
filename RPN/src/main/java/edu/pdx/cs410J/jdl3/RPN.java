@@ -23,21 +23,35 @@ public class RPN {
             if (token.matches("-?\\d+")) {
                 stack.push(token);
             } else {
-                try {
-                  binop(token, stack);
-                } catch (EmptyStackException ex) {
-                  throw new IllegalArgumentException(ex.getMessage());
+                if (token.equals("SQRT")) {
+                    doSqrt(stack);
+                } else {
+                  try {
+                    binop(token, stack);
+                  } catch (EmptyStackException ex) {
+                    throw new IllegalArgumentException(ex.getMessage());
+                  }
                 }
             }
         }
         if (stack.size() != 1) {
-          throw new IllegalArgumentException("Excess arguments left on stack");
+            throw new IllegalArgumentException("Excess arguments left on stack");
         }
 
         return Integer.parseInt(stack.pop());
     }
 
-    public static void binop(String operator, Stack<String> stack)
+  private static void doSqrt(Stack<String> stack) throws IllegalArgumentException {
+    try {
+      double num = Double.parseDouble(stack.pop());
+      stack.push(String.valueOf((int) Math.sqrt(num)));
+    } catch (EmptyStackException ex) {
+      throw new IllegalArgumentException(
+              "No operands on stack to square root");
+    }
+  }
+
+  public static void binop(String operator, Stack<String> stack)
             throws EmptyStackException {
         int right = Integer.parseInt(stack.pop());
         int left = Integer.parseInt(stack.pop());

@@ -71,4 +71,34 @@ public class RPNTest
     String arg = "5 2 /";
     assertEquals(RPN.parse(arg), 2);
   }
+
+  @Test
+  public void sqrtTest() {
+    String arg = "9 SQRT";
+    assertEquals(RPN.parse(arg), 3);
+  }
+
+  @Test
+  public void sqrtDoesIntegerSquareRoot() {
+    String arg  = "10 SQRT";
+    assertEquals(RPN.parse(arg), 3);
+  }
+
+  @Test
+  public void highSqrtTruncating() {
+    String arg = "15 SQRT";
+    assertEquals(RPN.parse(arg), 3);
+  }
+
+  @Test (expected = IllegalArgumentException.class)
+  public void sqrtWithNoOperand() {
+    String arg = "SQRT";
+    RPN.parse(arg);
+  }
+
+  @Test
+  public void complexSqrtExpr() {
+    String arg = "3 4 SQRT +";
+    assertEquals(RPN.parse(arg), 5);
+  }
 }
