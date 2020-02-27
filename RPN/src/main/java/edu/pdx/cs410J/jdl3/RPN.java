@@ -11,8 +11,20 @@ import java.util.Stack;
  */
 public class RPN {
     public static void main(String[] args) {
-        System.err.println("Missing command line arguments");
+      StringBuilder sb = new StringBuilder();
+      for (int i = 0; i < args.length; ++i) {
+        sb.append(args[i] + " ");
+      }
+      String polish = sb.toString().trim();
+      try {
+        int val = parse(polish);
+        System.out.println(val);
+      } catch (IllegalArgumentException ex) {
+        System.err.println(ex.getMessage());
         System.exit(1);
+      }
+
+        System.exit(0);
     }
 
     public static int parse(String expression) throws IllegalArgumentException {
@@ -25,12 +37,14 @@ public class RPN {
             } else {
                 if (token.equals("SQRT")) {
                     doSqrt(stack);
+                } else if (token.equals("MAX")) {
+                  doMax(stack);
                 } else {
-                  try {
-                    binop(token, stack);
-                  } catch (EmptyStackException ex) {
-                    throw new IllegalArgumentException(ex.getMessage());
-                  }
+                    try {
+                        binop(token, stack);
+                    } catch (EmptyStackException ex) {
+                        throw new IllegalArgumentException(ex.getMessage());
+                    }
                 }
             }
         }
@@ -41,17 +55,32 @@ public class RPN {
         return Integer.parseInt(stack.pop());
     }
 
-  private static void doSqrt(Stack<String> stack) throws IllegalArgumentException {
-    try {
-      double num = Double.parseDouble(stack.pop());
-      stack.push(String.valueOf((int) Math.sqrt(num)));
-    } catch (EmptyStackException ex) {
-      throw new IllegalArgumentException(
-              "No operands on stack to square root");
+  private static void doMax(Stack<String> stack) throws IllegalArgumentException {
+    if (stack.empty()) {
+      throw new IllegalArgumentException("No operands with MAX");
     }
+
+    int max = Integer.parseInt(stack.pop());
+    while (!stack.empty()) {
+      int temp = Integer.parseInt(stack.pop());
+      if (temp > max) {
+        max = temp;
+      }
+    }
+    stack.push(String.valueOf(max));
   }
 
-  public static void binop(String operator, Stack<String> stack)
+  private static void doSqrt(Stack<String> stack) throws IllegalArgumentException {
+        try {
+            double num = Double.parseDouble(stack.pop());
+            stack.push(String.valueOf((int) Math.sqrt(num)));
+        } catch (EmptyStackException ex) {
+            throw new IllegalArgumentException(
+                    "No operands on stack to square root");
+        }
+    }
+
+    public static void binop(String operator, Stack<String> stack)
             throws EmptyStackException {
         int right = Integer.parseInt(stack.pop());
         int left = Integer.parseInt(stack.pop());

@@ -101,4 +101,28 @@ public class RPNTest
     String arg = "3 4 SQRT +";
     assertEquals(RPN.parse(arg), 5);
   }
+
+  @Test
+  public void maxOfArgsIsMax() {
+    String arg = "3 4 5 6 7 8 MAX";
+    assertEquals(RPN.parse(arg), 8);
+  }
+
+  @Test
+  public void multiMax() {
+    String args = "3 5 6 MAX 2 3 MAX";
+    assertEquals(RPN.parse(args), 6);
+  }
+
+  @Test (expected = IllegalArgumentException.class)
+  public void maxWithNoOps() {
+    String args = "MAX";
+    RPN.parse(args);
+  }
+
+  @Test
+  public void lotsOfArguments() {
+    String args = "3 4 + 5 6 * MAX SQRT";
+    assertEquals(RPN.parse(args), 5);
+  }
 }
